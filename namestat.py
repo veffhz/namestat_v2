@@ -61,14 +61,23 @@ def get_top_py_functions_names_in_path(path, top_size):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--size', help='Top size for get verbs', type=int, default=200)
-    parser.add_argument('project_path', help='Project path for explore')
+    required_source = parser.add_mutually_exclusive_group(required=True)
+    required_source.add_argument('-p', '--project_path', help='Project path for explore')
+    required_source.add_argument('-r', '--source_repo', help='Source project')
     return parser.parse_args()
 
 
 if __name__ == "__main__":
 
     args = parse_args()
-    result_verbs = get_top_py_functions_verbs_in_path(args.project_path, args.size)
+    source_repo = args.source_repo
+    path_to_repo = args.project_path
+
+    if source_repo is not None and path_to_repo is None:
+        path_to_repo = helpers.get_parent_path(source_repo)
+        helpers.get_source_repo(source_repo, path_to_repo)
+
+    result_verbs = get_top_py_functions_verbs_in_path(path_to_repo, args.size)
 
     total_verbs = sum([vb[1] for vb in result_verbs])
     print('total %s verbs, %s unique' % (total_verbs, len(set(result_verbs))))

@@ -1,5 +1,9 @@
 import os
+import re
 import collections
+from os.path import abspath
+
+from git import Repo
 
 
 def flatten_list(_list):
@@ -31,3 +35,12 @@ def is_function_built_in(name):
 def split_case_name(string_to_split):
     return [name for name in string_to_split.split('_') if name]
 
+
+def get_parent_path(source_repo):
+    name = re.search(r'^.*/(.*).git$', source_repo)
+    return abspath('../{}'.format(name.group(1)))
+
+
+def get_source_repo(source_repo, path_to_repo, type_repo='git'):
+    if type_repo == 'git':
+        Repo.clone_from(source_repo, path_to_repo)
