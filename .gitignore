@@ -102,3 +102,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+*.iml
+.idea/
+target/
+*.zip
+.logs/
+bin/
+obj/
+.vs/
+*.pyc
+packages/
+test-output/
