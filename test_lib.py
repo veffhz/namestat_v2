@@ -1,6 +1,7 @@
 import unittest
 import os
 
+import api
 import namestat
 
 
@@ -13,7 +14,7 @@ class TestUM(unittest.TestCase):
         self.path = os.path.join('.', test_path)
 
     def test_top_functions_names_path(self):
-        functions_names = namestat.get_top_py_functions_names_in_path(self.path, 10)
+        functions_names = api.get_top_py_functions_names_in_path(self.path, 10)
         self.assertEqual(8, len(functions_names))
         self.assertEqual(8, len(set(functions_names)))
 
@@ -30,7 +31,7 @@ class TestUM(unittest.TestCase):
         self.assertEqual(1, len(set(nouns)))
 
     def test_all_names_in_path(self):
-        names = namestat.get_all_py_names_in_path(self.path)
+        names = api.get_all_py_names_in_path(self.path)
         self.assertEqual(3, len(names))
         self.assertEqual(2, len(set(names)))
 
