@@ -6,6 +6,7 @@ count = 5
 
 
 def do_one():
+    flag = True
     pass
 
 

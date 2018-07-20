@@ -29,36 +29,57 @@ def get_trees_in_specified_path(path):
     return trees
 
 
-def get_functions_names_in_tree(tree):
-    return [node.name.lower() for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+def get_functions_in_tree(tree, is_body=False):
+    if not is_body:
+        return [node.name.lower() for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+    else:
+        return [node.body for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+
+
+def get_local_names_in_tree(tree):
+    functions = get_functions_in_tree(tree, is_body=True)
+    names = [[a.targets[0].id for a in name if isinstance(a, ast.Assign)] for name in functions]
+    return names
 
 
 def get_part_speech_from_function_name(function_name, _type):
     return [word for word in function_name.split('_') if word_is_current_type(word, _type)]
 
 
-def get_names_on_function_handle_to_path(path, func):
+def get_top_part_speech_in_local(path):
     trees = get_trees_in_specified_path(path)
-    return [name for name in helpers.flatten_list([func(tree) for tree in trees])
-            if not helpers.is_function_built_in(name)]
+    part_speech_names = [name for name in helpers.flatten_list([get_local_names_in_tree(tree) for tree in trees])]
+    return helpers.flatten_list([name for name in part_speech_names])
 
 
-def get_top_functions_part_speech(path, top_size, _type):
-    functions_names = get_names_on_function_handle_to_path(path, get_functions_names_in_tree)
-    verbs = helpers.flatten_list([get_part_speech_from_function_name(name, _type) for name in functions_names])
-    return helpers.most_common(verbs, top_size)
+def get_top_part_speech_in_global(path, _type):
+    trees = get_trees_in_specified_path(path)
+    part_speech_names = [name for name in helpers.flatten_list([get_functions_in_tree(tree) for tree in trees])
+                         if not helpers.is_function_built_in(name)]
+    return helpers.flatten_list([get_part_speech_from_function_name(name, _type)
+                                 for name in part_speech_names])
+
+
+def get_top_part_speech(path, top_size, _type, scope):
+    results = {'global': get_top_part_speech_in_global(path, _type),
+               'local': get_top_part_speech_in_local(path)}
+
+    return helpers.most_common(results[scope], top_size)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--size', help='Top size for get result', type=int, default=200)
-    parser.add_argument('-ps', '--part_speech', help='Part of speech',
-                        default='verb', nargs='?', choices=['verb', 'noun'])
-    parser.add_argument('-sc', '--scope', help='Scope of search',
-                        default='global', nargs='?', choices=['global', 'local'])
-    required_source = parser.add_mutually_exclusive_group(required=True)
-    required_source.add_argument('-p', '--project_path', help='Project path for explore')
-    required_source.add_argument('-r', '--source_repo', help='Source project')
+
+    group_detail = parser.add_argument_group('Detail')
+    group_detail.add_argument('-ps', '--part_speech', help='Part of speech',
+                              default='verb', nargs='?', choices=['verb', 'noun'])
+    group_detail.add_argument('-sc', '--scope', help='Scope of search',
+                              default='global', nargs='?', choices=['global', 'local'])
+
+    group_source = parser.add_argument_group('Source')
+    group_source.add_argument('-p', '--project_path', help='Project path for explore')
+    group_source.add_argument('-r', '--source_repo', help='Source project')
     return parser.parse_args()
 
 
@@ -80,8 +101,9 @@ def main():
         helpers.get_source_repo(source_repo, path_to_repo)
 
     size = args.size
+    scope = args.scope
     _type = args.part_speech
-    results = get_top_functions_part_speech(path_to_repo, size, _type)
+    results = get_top_part_speech(path_to_repo, size, _type, scope)
     print_results(results, _type, size)
 
 
