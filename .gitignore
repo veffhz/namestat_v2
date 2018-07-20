@@ -114,3 +114,5 @@ obj/
 *.pyc
 packages/
 test-output/
+*.json
+*.csv

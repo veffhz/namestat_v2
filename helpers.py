@@ -1,6 +1,8 @@
 import os
 import re
 import collections
+import time
+
 from os.path import abspath
 
 from git import Repo
@@ -44,3 +46,7 @@ def get_parent_path(source_repo):
 def get_source_repo(source_repo, path_to_repo, type_repo='git'):
     if type_repo == 'git':
         Repo.clone_from(source_repo, path_to_repo)
+
+
+def datetime_name(ext):
+    return time.strftime("%Y%m%d-%H%M%S.{}".format(ext))
