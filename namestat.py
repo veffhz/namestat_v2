@@ -1,8 +1,8 @@
 import argparse
-import helpers
+from modules import helpers
 
-from analyze_handlers import get_top_part_speech
-from output import process_result
+from modules.analyze_handlers import get_top_part_speech
+from modules.output import process_result
 
 
 def parse_args():

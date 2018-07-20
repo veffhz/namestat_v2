@@ -1,9 +1,9 @@
 import ast
 
-import helpers
+from modules import helpers
 
-from analyze_handlers import get_functions_in_tree
-from analyze_handlers import get_trees_in_specified_path
+from modules.analyze_handlers import get_functions_in_tree
+from modules.analyze_handlers import get_trees_in_specified_path
 
 
 def get_top_functions_names_in_path(path, top_size, language):

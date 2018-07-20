@@ -3,7 +3,7 @@ import ast
 
 from nltk import pos_tag
 
-import helpers
+from modules import helpers
 
 
 def word_is_current_type(word, _type):
