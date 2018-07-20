@@ -1,5 +1,6 @@
 ## namestat_v2
-Lib for collect name statistics in *.py files
+
+Lib for advanced work with name statistics in *.py files
 
 ##### Prerequisites
 
@@ -8,26 +9,37 @@ Python 3 and pip
 ##### Install python dependencies
 
 ```
-pip install -r requirements.txt
-python download_tagger.py
+pip3 install -r requirements.txt
+python3 download_tagger.py
 ```
 
-##### Usage (simple start):
+##### Usage:
 
 ```
-python3 namestat.py --size path_to_project
+python3 namestat.py --size --project_path --source_repo --part_speech --scope --language --output_type
 ```
+
+* size - top words
+* project_path - path to project on filesystem
+* source_repo - (url to remote repository (git supported))
+* part_speech - type of part of speech (verb or noun)
+* scope - scope function (global) or local variables (local)
+* language - programming language of project (python supported)
+* output_type - show result in console, export in json or csv format
 
 ##### Demo:
 
 ```
-python3 namestat.py --size=100 test
+python3 namestat.py -p example_file -ps verb -sc global -o console -l python
 ```
 
-##### Also you can import functions and usage
+##### Also you can import functions and usage api (deprecated)
 
-* **get_verbs_from_function_name(**_function_name_**)** - get list of verbs in function name
+* **get_all_names_in_path(**_path_**,** _language_**)** - get list of all names in files in specified path
+* **get_top_functions_names_in_path(**_path_**,** _top_size_**)** - get top function names in files in specified path
 
-* **get_all_py_names_in_path(**_path_**)** - get list of all names in *.py files in specified path
-* **get_top_py_functions_names_in_path(**_path_**,** _top_size_**)** - get top function names in *.py files in specified path
-* **get_top__py_functions_verbs_in_path(**_path_**,** _top_size_**)** - get top verbs function names in *.py files in specified path
+
+
+##### Testing
+
+python -m unittest test_lib.py
