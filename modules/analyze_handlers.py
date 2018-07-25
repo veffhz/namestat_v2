@@ -1,9 +1,9 @@
-import re
-import ast
-
 from nltk import pos_tag
 
 from modules import helpers
+from modules.code_parsers import get_trees_in_specified_path
+from modules.code_parsers import get_local_names_in_tree
+from modules.code_parsers import get_functions_in_tree
 
 
 def word_is_current_type(word, _type):
@@ -11,40 +11,9 @@ def word_is_current_type(word, _type):
     if word is None:
         return False
     if _type == 'verb':
-        return re.match(r'V[BDGNPZ]', tag)
+        return 'VB' in tag
     elif _type == 'noun':
-        return re.match(r'NN', tag)
-
-
-def get_extention(language):
-    if language == 'python':
-        return '.py'
-
-
-def get_trees_in_specified_path(path, language):
-    trees = []
-    ext = get_extention(language)
-    file_names = helpers.collect_file_names_by_ext(path, ext)
-    for filename in file_names:
-        file_content = helpers.get_file_content(filename)
-        try:
-            trees.append(ast.parse(file_content))
-        except SyntaxError:
-            pass
-    return trees
-
-
-def get_functions_in_tree(tree, is_body=False):
-    if not is_body:
-        return [node.name.lower() for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
-    else:
-        return [node.body for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
-
-
-def get_local_names_in_tree(tree):
-    functions = get_functions_in_tree(tree, is_body=True)
-    names = [[a.targets[0].id for a in name if isinstance(a, ast.Assign)] for name in functions]
-    return names
+        return 'NN' in tag
 
 
 def get_part_speech_from_function_name(function_name, _type):

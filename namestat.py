@@ -29,23 +29,17 @@ def parse_args():
 
 def main():
     args = parse_args()
-    source_repo = args.source_repo
-    path_to_repo = args.project_path
 
-    if source_repo is not None and path_to_repo is None:
-        path_to_repo = helpers.get_parent_path(source_repo)
-        helpers.get_source_repo(source_repo, path_to_repo)
+    if args.source_repo is not None and args.project_path is None:
+        path_to_repo = helpers.get_parent_path(args.source_repo)
+        helpers.get_source_repo(args.source_repo, path_to_repo)
 
-    size = args.size
-    scope = args.scope
-    part_speech_type = args.part_speech
-    language = args.language
-    results = get_top_part_speech(path_to_repo, size,
-                                  part_speech_type,
-                                  scope, language)
+    results = get_top_part_speech(args.project_path, args.size,
+                                  args.part_speech,
+                                  args.scope, args.language)
 
     output_type = args.output_type
-    process_result(results, part_speech_type, output_type)
+    process_result(results, args.part_speech, output_type)
 
 
 if __name__ == "__main__":
